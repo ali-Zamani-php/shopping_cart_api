@@ -51,7 +51,7 @@ class ItemFixtures extends Fixture
                 $item->setName($data['1']);
                 $item->setPrice(intval($data['2']));
                 $item->Setdescription($data['3']);
-                $item->setImageName('storage/articleimages/' . $foto_name);
+                $item->setImagePath('storage/articleimages/' . $foto_name);
                 $manager->persist($item);
             }
             $firstline = false;

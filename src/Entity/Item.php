@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: ItemRepository::class)]
 class Item
@@ -14,25 +16,33 @@ class Item
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['shoppingCart:read', 'item:read','shoppingCartItem:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['shoppingCart:read', 'item:read'])]
     private ?string $name = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['shoppingCart:read', 'item:read'])]
+    private ?string $description = null;
+
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Groups(['shoppingCart:read', 'item:read'])]
     private ?string $price = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $description = null;
+    #[Groups(['shoppingCart:read', 'item:read'])]
+    private ?string $image_path = null;
+
+
 
     /**
      * @var Collection<int, ShoppingCartItem>
      */
-    #[ORM\OneToMany(targetEntity: ShoppingCartItem::class, mappedBy: 'item_id')]
+    #[ORM\OneToMany(targetEntity: ShoppingCartItem::class, mappedBy: 'item')]
+    #[MaxDepth(1)]
     private Collection $shoppingCartItems;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image_name = null;
 
     public function __construct()
     {
@@ -56,6 +66,18 @@ class Item
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getPrice(): ?string
     {
         return $this->price;
@@ -68,17 +90,19 @@ class Item
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getImagePath(): ?string
     {
-        return $this->description;
+        return $this->image_path;
     }
 
-    public function setDescription(?string $description): static
+    public function setImagePath(?string $image_path): static
     {
-        $this->description = $description;
+        $this->image_path = $image_path;
 
         return $this;
     }
+
+
 
     /**
      * @return Collection<int, ShoppingCartItem>
@@ -92,7 +116,7 @@ class Item
     {
         if (!$this->shoppingCartItems->contains($shoppingCartItem)) {
             $this->shoppingCartItems->add($shoppingCartItem);
-            $shoppingCartItem->setItemId($this);
+            $shoppingCartItem->setItem($this);
         }
 
         return $this;
@@ -102,22 +126,10 @@ class Item
     {
         if ($this->shoppingCartItems->removeElement($shoppingCartItem)) {
             // set the owning side to null (unless already changed)
-            if ($shoppingCartItem->getItemId() === $this) {
-                $shoppingCartItem->setItemId(null);
+            if ($shoppingCartItem->getItem() === $this) {
+                $shoppingCartItem->setItem(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getImageName(): ?string
-    {
-        return $this->image_name;
-    }
-
-    public function setImageName(?string $image_name): static
-    {
-        $this->image_name = $image_name;
 
         return $this;
     }

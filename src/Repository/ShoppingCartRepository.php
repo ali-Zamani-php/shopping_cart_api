@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Item;
 use App\Entity\ShoppingCart;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +16,27 @@ class ShoppingCartRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, ShoppingCart::class);
     }
+    public function findWithItems(int $id): ?ShoppingCart
+    {
+        $qb = $this->createQueryBuilder('sc')
+        ->leftJoin('sc.shoppingCartItems', 'sci')
+        ->addSelect('sci')
+        ->leftJoin('sci.item', 'i')
+        ->where('sc.id = :id')
+        ->setParameter('id', $id);
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function createShoppingCart(): ShoppingCart
+    {
+        $shoppingCart = new ShoppingCart();
+        $this->getEntityManager()->persist($shoppingCart);
+        $this->getEntityManager()->flush();
+
+        return $shoppingCart;
+    }
+
+
 
     //    /**
     //     * @return ShoppingCart[] Returns an array of ShoppingCart objects

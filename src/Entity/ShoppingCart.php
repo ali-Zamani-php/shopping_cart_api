@@ -6,6 +6,8 @@ use App\Repository\ShoppingCartRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: ShoppingCartRepository::class)]
 class ShoppingCart
@@ -13,12 +15,14 @@ class ShoppingCart
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['shoppingCart:read'])]
     private ?int $id = null;
 
     /**
      * @var Collection<int, ShoppingCartItem>
      */
-    #[ORM\OneToMany(targetEntity: ShoppingCartItem::class, mappedBy: 'shopping_cart_id', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ShoppingCartItem::class, mappedBy: 'shoppingCart')]
+    #[Groups(['shoppingCart:read'])]
     private Collection $shoppingCartItems;
 
     public function __construct()
@@ -30,6 +34,7 @@ class ShoppingCart
     {
         return $this->id;
     }
+
 
     /**
      * @return Collection<int, ShoppingCartItem>
@@ -43,7 +48,7 @@ class ShoppingCart
     {
         if (!$this->shoppingCartItems->contains($shoppingCartItem)) {
             $this->shoppingCartItems->add($shoppingCartItem);
-            $shoppingCartItem->setShoppingCartId($this);
+            $shoppingCartItem->setShoppingCart($this);
         }
 
         return $this;
@@ -53,11 +58,10 @@ class ShoppingCart
     {
         if ($this->shoppingCartItems->removeElement($shoppingCartItem)) {
             // set the owning side to null (unless already changed)
-            if ($shoppingCartItem->getShoppingCartId() === $this) {
-                $shoppingCartItem->setShoppingCartId(null);
+            if ($shoppingCartItem->getShoppingCart() === $this) {
+                $shoppingCartItem->setShoppingCart(null);
             }
         }
-
         return $this;
     }
 }
