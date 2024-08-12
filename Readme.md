@@ -97,7 +97,7 @@ The ShoppingCart API is a RESTful service that allows clients to manage shopping
    - `cart_id`: The ID of the shopping cart.
    - `item_id`: The ID of the item.
 - **Response:**
-   - **204 NO-Content**
+   - **204 No-Content**
 
 
 
