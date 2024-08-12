@@ -17,7 +17,6 @@ class ShoppingCartController extends AbstractController
 
     /**
      * @param ShoppingCartRepository $shoppingCarts
-     * @param EntityManagerInterface $objectManager
      * @param SerializerInterface $serializer
      */
     public function __construct( ShoppingCartRepository $shoppingCarts)

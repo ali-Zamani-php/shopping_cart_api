@@ -3,39 +3,42 @@
 namespace App\DataFixtures;
 
 use App\Entity\Item;
+use App\Entity\ShoppingCart;
+use App\Entity\ShoppingCartItem;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
-use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Routing\RequestContext;
+
 
 class ItemFixtures extends Fixture
 {
     private $projectDir;
+    private $requestContext;
 
-    public function __construct(string $projectDir)
+    public function __construct(RequestContext $requestContext,string $projectDir)
     {
+        $this->requestContext = $requestContext;
         $this->projectDir = $projectDir;
     }
 
     public function load(ObjectManager $manager): void
     {
+        $shoppingCart = new ShoppingCart();
+        $manager->persist($shoppingCart);
+        $baseUrl = $this->requestContext->getScheme() . '://' . $this->requestContext->getHost().':'.$this->requestContext->getHttpPort();
         $csv_datei = "articles";
-        $filesystem = new Filesystem();
         $projectDir = $this->projectDir;
+
         try {
             $file_names = scandir($projectDir . '/public/storage/articleimages/');
         } catch (\Exception $ex) {
-            // Log the error or handle the exception
-            //$logger->error(__CLASS__ . ':' . __LINE__ . '-' . $ex->getMessage());
             throw new FileNotFoundException('Directory not found: ' . $projectDir . '/public/storage/articleimages/');
         }
 
         try {
             $csv_input = fopen($projectDir . "/src/DataFixtures/DevelopmentData/" . $csv_datei . '.csv', "r");
         } catch (\Exception $ex) {
-            // Log the error or handle the exception
-            //$logger->error(__CLASS__ . ':' . __LINE__ . '-' . $ex->getMessage());
             throw new FileNotFoundException('File not found: ' . $projectDir . "/DevelopmentData/" . $csv_datei . '.csv');
         }
         $firstline = true;
@@ -51,12 +54,18 @@ class ItemFixtures extends Fixture
                 $item->setName($data['1']);
                 $item->setPrice(intval($data['2']));
                 $item->Setdescription($data['3']);
-                $item->setImagePath('storage/articleimages/' . $foto_name);
+                $item->setImagePath($baseUrl.'/storage/articleimages/' . $foto_name);
                 $manager->persist($item);
+                $shoppingCartItem = new shoppingCartItem();
+                $shoppingCartItem->setItem($item);
+                $shoppingCartItem->setShoppingCart($shoppingCart);
+                $shoppingCartItem->setQuantity(1);
+                $manager->persist($shoppingCartItem);
             }
             $firstline = false;
         }
         fclose($csv_input);
+
         $manager->flush();
     }
 }

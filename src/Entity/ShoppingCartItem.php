@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\ShoppingCartItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ShoppingCartItemRepository::class)]
 class ShoppingCartItem
@@ -11,41 +13,58 @@ class ShoppingCartItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['shoppingCart:read'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'shoppingCartItems')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?ShoppingCart $shopping_cart_id = null;
+    private ?ShoppingCart $shoppingCart = null;
 
     #[ORM\ManyToOne(inversedBy: 'shoppingCartItems')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Item $item_id = null;
+    #[Groups(['shoppingCart:read'])]
+    private ?Item $item = null;
+
+    #[ORM\Column]
+    #[Groups(['shoppingCart:read'])]
+    #[Assert\Positive]
+    private ?int $quantity = 1;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getShoppingCartId(): ?ShoppingCart
+    public function getShoppingCart(): ?ShoppingCart
     {
-        return $this->shopping_cart_id;
+        return $this->shoppingCart;
     }
 
-    public function setShoppingCartId(?ShoppingCart $shopping_cart_id): static
+    public function setShoppingCart(?ShoppingCart $shoppingCart): static
     {
-        $this->shopping_cart_id = $shopping_cart_id;
+        $this->shoppingCart = $shoppingCart;
 
         return $this;
     }
 
-    public function getItemId(): ?Item
+    public function getItem(): ?Item
     {
-        return $this->item_id;
+        return $this->item;
     }
 
-    public function setItemId(?Item $item_id): static
+    public function setItem(?Item $item): static
     {
-        $this->item_id = $item_id;
+        $this->item = $item;
+
+        return $this;
+    }
+
+    public function getQuantity(): ?int
+    {
+        return $this->quantity;
+    }
+
+    public function setQuantity(int $quantity): static
+    {
+        $this->quantity = $quantity;
 
         return $this;
     }
