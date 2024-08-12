@@ -50,7 +50,7 @@ The ShoppingCart API is a RESTful service that allows clients to manage shopping
 
 ### 1. Create a Shopping Cart
 
-- **Endpoint:** `POST /shopping-cart`
+- **Endpoint:** `POST /api/v1/shopping-cart`
 - **Description:** Creates a new shopping cart.
 - **Response:**
    - **201 Created**
@@ -66,7 +66,7 @@ The ShoppingCart API is a RESTful service that allows clients to manage shopping
 
 ### 2. Add an Item to the Shopping Cart
 
-- **Endpoint:** `POST /shopping-cart/{cart_id}/item/{item_id}`
+- **Endpoint:** `POST /api/v1/shopping-cart/{cart_id}/item/{item_id}`
 - **Description:** Adds an item to the shopping cart.
 - **Path Parameters:**
    - `cart_id`: The ID of the shopping cart.
@@ -91,7 +91,7 @@ The ShoppingCart API is a RESTful service that allows clients to manage shopping
 
 ### 3. Remove an Item from the Shopping Cart
 
-- **Endpoint:** `DELETE /shopping-cart/{cart_id}/item/{item_id}`
+- **Endpoint:** `DELETE /api/v1/shopping-cart/{cart_id}/item/{item_id}`
 - **Description:** Removes an item from the shopping cart.
 - **Path Parameters:**
    - `cart_id`: The ID of the shopping cart.
@@ -103,7 +103,7 @@ The ShoppingCart API is a RESTful service that allows clients to manage shopping
 
 ### 4. Edit an Item in the Shopping Cart
 
-- **Endpoint:** `PUT /shopping-cart/{cart_id}/item/{item_id}`
+- **Endpoint:** `PUT /api/v1/shopping-cart/{cart_id}/item/{item_id}`
 - **Description:** Edits the quantity of an item in the shopping cart.
 - **Path Parameters:**
    - `cart_id`: The ID of the shopping cart.
@@ -134,7 +134,7 @@ The ShoppingCart API is a RESTful service that allows clients to manage shopping
 
 ### 5. View Shopping Cart
 
-- **Endpoint:** `GET /shopping-cart/{cart_id}`
+- **Endpoint:** `GET /api/v1/shopping-cart/{cart_id}`
 - **Description:** Retrieves the shopping cart with all its items.
 - **Path Parameters:**
    - `cart_id`: The ID of the shopping cart.
