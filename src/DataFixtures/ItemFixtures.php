@@ -15,18 +15,20 @@ class ItemFixtures extends Fixture
 {
     private $projectDir;
     private $requestContext;
+    private $appUrl;
 
-    public function __construct(RequestContext $requestContext,string $projectDir)
+    public function __construct(RequestContext $requestContext,string $projectDir, string $appUrl)
     {
         $this->requestContext = $requestContext;
         $this->projectDir = $projectDir;
+        $this->appUrl = $appUrl;
     }
 
     public function load(ObjectManager $manager): void
     {
         $shoppingCart = new ShoppingCart();
         $manager->persist($shoppingCart);
-        $baseUrl = $this->requestContext->getScheme() . '://' . $this->requestContext->getHost().':'.$this->requestContext->getHttpPort();
+        $baseUrl = $this->appUrl; //$this->requestContext->getScheme() . '://' . $this->requestContext->getHost().':8000';
         $csv_datei = "articles";
         $projectDir = $this->projectDir;
 
